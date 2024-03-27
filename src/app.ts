@@ -7,8 +7,6 @@ import NodeCache from 'node-cache';
 import morgan from 'morgan';
 import Stripe from 'stripe';
 import cors from 'cors';
-// @ts-ignore
-import { styleText } from 'node:util';
 
 //@ importing routes
 import userRoutes from './routes/user.js';
@@ -53,8 +51,5 @@ app.use('/api/v1/dashboard', dashboardRoute);
 app.use(errorMiddleware);
 
 app.listen(port, () =>
-  console.log(
-    `server is listening at`,
-    styleText('bgGreen', `http://localhost:${port}`)
-  )
+  console.log(`server is listening at http://localhost:${port}`.bgGreen)
 );
