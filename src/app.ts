@@ -17,10 +17,10 @@ import orderRoute from './routes/order.js';
 import paymentRoute from './routes/payment.js';
 import dashboardRoute from './routes/stats.js';
 
-//  import { config } from 'dotenv';
-// config({
-//  path: './.env',
-// });
+import { config } from 'dotenv';
+config({
+  path: './.env'
+});
 
 process.env.PORT == undefined && console.log(`ENV PORT NOT WORKING`.bgRed);
 
