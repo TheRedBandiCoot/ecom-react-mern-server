@@ -6,7 +6,7 @@
   "main": "dist/app.js",
   "type": "module",
   "scripts": {
-    "start": "bun dist/app.js",
+    "start": "bun --env-file=.env dist/app.js",
     "build": "tsc",
     "watch": "tsc -w",
     "dev-bun": "bun --watch --env-file=.env dist/app.js",
