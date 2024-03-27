@@ -1,0 +1,46 @@
+{
+  "name": "bun-ecommerce-backend",
+  "version": "1.0.0",
+  "description": "",
+  "module": "index.ts",
+  "main": "dist/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "bun dist/app.js",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dev-bun": "bun --watch --env-file=.env dist/app.js",
+    "dev-node": "nodemon --env-file=.env dist/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "firebase-admin": "^12.0.0",
+    "mongoose": "^8.1.1",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "node-cache": "^5.1.2",
+    "stripe": "^14.19.0",
+    "uuid": "^9.0.1",
+    "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@types/bun": "latest",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "@types/multer": "^1.4.11",
+    "@types/node": "^20.11.13",
+    "@types/uuid": "^9.0.8",
+    "@types/validator": "^13.11.8",
+    "colors": "^1.4.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
