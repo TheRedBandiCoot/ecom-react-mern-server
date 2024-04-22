@@ -9,7 +9,7 @@ import { Product } from '../models/product.js';
 import ErrorHandler from '../utils/utilityClass.js';
 import fs from 'fs';
 import { nodeCache } from '../app.js';
-import { invalidateCache } from '../utils/features.js';
+import { invalidateCache, uploadOnCloudinary } from '../utils/features.js';
 
 export const getLatestProducts = TryCatch(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -94,20 +94,23 @@ export const newProduct = TryCatch(
 
     const photo = req.file;
     if (!photo) return next(new ErrorHandler('Please Add Photo', 400));
+    console.log(photo);
 
     if (!name || !category || !price || !stock) {
-      fs.rm(photo.path, () =>
-        console.log('Photo Deleted because rest fields are empty')
-      );
+      // fs.rm(photo.path, () =>
+      //   console.log('Photo Deleted because rest fields are empty')
+      // );
       return next(new ErrorHandler('Please Enter All Field', 400));
     }
+
+    const photoRes = await uploadOnCloudinary({ localFilePath: photo.path });
 
     await Product.create({
       name,
       price,
       stock,
       category: category.toLowerCase(),
-      photo: photo.path
+      photo: photoRes?.url
     });
 
     invalidateCache({ product: true, admin: true });
@@ -138,10 +141,12 @@ export const updateProduct = TryCatch(
       return next(new ErrorHandler('No such product found, Invalid ID', 404));
 
     if (photo) {
-      fs.rm(product.photo!, () => {
-        console.log('Old Photo Deleted');
+      const photoRes = await uploadOnCloudinary({
+        localFilePath: photo.path,
+        isUpdateAndDelete: true,
+        url: product.photo
       });
-      product.photo = photo.path;
+      product.photo = photoRes?.url!;
     }
 
     if (name) product.name = name;
@@ -168,9 +173,11 @@ export const deleteProduct = TryCatch(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
   if (!product) return next(new ErrorHandler('Product Not found', 404));
 
-  fs.rm(product.photo!, () => {
-    console.log('Product Photo deleted successfully');
-  });
+  // fs.rm(product.photo!, () => {
+  //   console.log('Product Photo deleted successfully');
+  // });
+
+  await uploadOnCloudinary({ isDelete: true, url: product.photo });
 
   await product.deleteOne();
 

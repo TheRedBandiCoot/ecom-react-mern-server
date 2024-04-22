@@ -8,13 +8,14 @@ import {
   getLatestProducts,
   getSingleProduct,
   newProduct,
-  updateProduct,
+  updateProduct
 } from '../controllers/product.js';
-import { singleUpload } from '../middlewares/multer.js';
+import { upload } from '../middlewares/multer.js';
+
 const app = express.Router();
 
 //@ To Create New Product - route - POST - /api/v1/product/new
-app.post('/new', adminOnly, singleUpload, newProduct);
+app.post('/new', adminOnly, upload, newProduct);
 
 //@ To Get All Products With filters - route - GET - /api/v1/product/search
 app.get('/all', getAllProducts);
@@ -34,7 +35,7 @@ app.get('/admin-products', adminOnly, getAdminProducts);
 app
   .route('/:id')
   .get(getSingleProduct)
-  .put(adminOnly, singleUpload, updateProduct)
+  .put(adminOnly, upload, updateProduct)
   .delete(adminOnly, deleteProduct);
 
 export default app;

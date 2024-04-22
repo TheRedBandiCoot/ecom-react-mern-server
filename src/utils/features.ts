@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
+import fs from 'fs';
 import type { OrderItemType, invalidateCacheType } from '../types/types';
 import { nodeCache } from '../app.js';
 import { Product } from '../models/product.js';
 import { faker } from '@faker-js/faker';
+import { v2 as cloudinary } from 'cloudinary';
 
 export const connectDB = (uri: string) => {
   mongoose
@@ -11,6 +13,46 @@ export const connectDB = (uri: string) => {
     })
     .then(res => console.log(`DB connected to ${res.connection.host}`))
     .catch(err => console.log(err));
+};
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+type UploadOnCloudinaryType = {
+  localFilePath?: string;
+  isUpdateAndDelete?: boolean;
+  isDelete?: boolean;
+  url?: string;
+};
+
+export const uploadOnCloudinary = async ({
+  localFilePath,
+  isDelete = false,
+  isUpdateAndDelete = false,
+  url
+}: UploadOnCloudinaryType) => {
+  const newUrl = url?.split('.')[2].split('/').at(-1)!;
+  try {
+    if (isDelete) {
+      await cloudinary.uploader.destroy(newUrl);
+      return null;
+    }
+    if (!localFilePath) return null;
+    if (isUpdateAndDelete) {
+      await cloudinary.uploader.destroy(newUrl);
+    }
+    const response = await cloudinary.uploader.upload(localFilePath, {
+      resource_type: 'auto'
+    });
+    fs.unlinkSync(localFilePath);
+    return response;
+  } catch (error) {
+    fs.unlinkSync(localFilePath!);
+    return null;
+  }
 };
 
 export const invalidateCache = ({
